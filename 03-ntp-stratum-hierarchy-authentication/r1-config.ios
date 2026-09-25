@@ -1,0 +1,22 @@
+hostname R1
+!
+! 1. Define and enable cryptographic MD5 authentication
+ntp authentication-key 1 md5 0822455D0A16 7
+ntp authenticate
+ntp trusted-key 1
+!
+! 2. Synchronize to external Stratum 1 server and declare local master capability
+ntp server 1.1.1.1
+ntp master 7
+ntp update-calendar
+!
+interface GigabitEthernet0/0
+ description ## WAN Uplink to Stratum 1 Reference Clock ##
+ no shutdown
+!
+interface GigabitEthernet0/1
+ description ## LAN Interconnect to R2 (NTP Master Interface) ##
+ ip address 192.168.12.1 255.255.255.0
+ no shutdown
+!
+end
