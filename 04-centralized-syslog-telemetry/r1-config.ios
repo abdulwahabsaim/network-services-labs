@@ -1,0 +1,27 @@
+hostname R1
+!
+! 1. Enable millisecond precision timestamps for chronological auditing
+service timestamps log datetime msec
+no service timestamps debug datetime msec
+!
+! 2. Configure circular RAM buffer
+logging buffered 4096
+!
+! 3. Configure remote Syslog daemon export (UDP 514)
+logging 192.168.1.100
+logging trap debugging
+!
+interface GigabitEthernet0/0
+ description ## LAN Gateway & Syslog Server Link ##
+ ip address 192.168.1.1 255.255.255.0
+ no shutdown
+!
+interface GigabitEthernet0/1
+ description ## Unused Interface ##
+ shutdown
+!
+interface GigabitEthernet0/2
+ description ## Unused Interface ##
+ shutdown
+!
+end
