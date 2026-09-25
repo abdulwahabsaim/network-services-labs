@@ -1,0 +1,62 @@
+hostname SW1
+!
+! 1. Provision Campus VLANs
+vlan 10
+ name Management
+!
+vlan 100
+ name Internal_WLAN
+!
+vlan 200
+ name Guest_WLAN
+!
+! 2. 802.1Q Trunk Uplink to Cisco 3504 WLC Port 1
+interface GigabitEthernet1/0/1
+ description ## Trunk Uplink to Cisco 3504 WLC Port 1 ##
+ switchport trunk native vlan 10
+ switchport trunk allowed vlan 10,100,200
+ switchport mode trunk
+ no shutdown
+!
+! 3. Access Ports for Lightweight APs and Admin Management Host
+interface GigabitEthernet1/0/2
+ description ## Access Link to LAP1 ##
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ no shutdown
+!
+interface GigabitEthernet1/0/3
+ description ## Access Link to LAP2 ##
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ no shutdown
+!
+interface GigabitEthernet1/0/4
+ description ## Access Link to Admin PC1 ##
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ no shutdown
+!
+! 4. Layer 3 SVI Gateways
+interface Vlan10
+ description ## SVI: Management & AP Discovery ##
+ ip address 172.16.1.1 255.255.255.0
+ no shutdown
+!
+interface Vlan100
+ description ## SVI: Corporate Wi-Fi Gateway ##
+ ip address 10.0.0.1 255.255.255.0
+ no shutdown
+!
+interface Vlan200
+ description ## SVI: Guest Wi-Fi Gateway ##
+ ip address 10.1.0.1 255.255.255.0
+ no shutdown
+!
+end
