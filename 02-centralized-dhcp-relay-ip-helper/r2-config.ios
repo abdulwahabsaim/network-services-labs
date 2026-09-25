@@ -1,0 +1,39 @@
+hostname R2
+!
+! 1. Exclude static management and gateway IP ranges
+ip dhcp excluded-address 192.168.1.1 192.168.1.10
+ip dhcp excluded-address 192.168.2.1 192.168.2.10
+ip dhcp excluded-address 203.0.113.1
+!
+! 2. Remote Branch Pool (Relayed via R1)
+ip dhcp pool POOL1
+ network 192.168.1.0 255.255.255.0
+ default-router 192.168.1.1
+ dns-server 8.8.8.8
+ domain-name abdulwahabsaim.github.io
+!
+! 3. Central Local LAN Pool
+ip dhcp pool POOL2
+ network 192.168.2.0 255.255.255.0
+ default-router 192.168.2.1
+ dns-server 8.8.8.8
+ domain-name abdulwahabsaim.github.io
+!
+! 4. Point-to-Point WAN Transit Pool
+ip dhcp pool POOL3
+ network 203.0.113.0 255.255.255.252
+!
+interface GigabitEthernet0/0
+ description ## WAN Transit Link to R1 ##
+ ip address 203.0.113.1 255.255.255.252
+ no shutdown
+!
+interface GigabitEthernet0/1
+ description ## Central Site Local LAN ##
+ ip address 192.168.2.1 255.255.255.0
+ no shutdown
+!
+! Route to reach the remote branch subnet via R1
+ip route 192.168.1.0 255.255.255.0 203.0.113.2
+!
+end
