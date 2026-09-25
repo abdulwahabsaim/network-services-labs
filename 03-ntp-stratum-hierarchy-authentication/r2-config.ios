@@ -1,0 +1,17 @@
+hostname R2
+!
+! 1. Mirror identical key credentials and trust statement
+ntp authentication-key 1 md5 0822455D0A16 7
+ntp authenticate
+ntp trusted-key 1
+!
+! 2. Synchronize to R1 using Key 1 for validation
+ntp server 192.168.12.1 key 1
+ntp update-calendar
+!
+interface GigabitEthernet0/0
+ description ## Uplink to R1 (NTP Time Source) ##
+ ip address 192.168.12.2 255.255.255.0
+ no shutdown
+!
+end
